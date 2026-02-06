@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Hammads Merch</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f3f4f6; }
+        .card { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .hidden { display: none; }
+        .animate-fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+
+    <div class="card max-w-md w-full p-6">
+        <!-- Header -->
+        <div class="text-center mb-6 border-b pb-4">
+            <h1 class="text-2xl font-bold text-gray-800">🖨️ Hammads Merch</h1>
+            <p class="text-xs text-gray-500 mt-1">WA Khusus Order: 0851-1137-9790</p>
+            <p class="text-[10px] text-gray-400 mt-1">Jam Ops: 07.00 - 23.00 WIB</p>
+        </div>
+
+        <!-- Kolom Data Diri (Wajib) -->
+        <div class="mb-6 bg-gray-50 p-4 rounded-lg border border-gray-200">
+            <h3 class="text-sm font-bold text-gray-700 mb-3"><i class="fas fa-user-circle"></i> Identitas Pemesan (Wajib)</h3>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="text-xs text-gray-500 block mb-1">Nama Panggilan</label>
+                    <input type="text" id="inputNama" placeholder="Contoh: Tono" class="w-full p-2 border border-gray-300 rounded text-sm focus:border-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-500 block mb-1">NIM</label>
+                    <input type="number" id="inputNIM" placeholder="12524099" class="w-full p-2 border border-gray-300 rounded text-sm focus:border-blue-500 outline-none">
+                </div>
+            </div>
+        </div>
+
+        <!-- Opsi Promo New User -->
+        <div class="mb-6 bg-blue-50 p-3 rounded-lg border border-blue-200 transition-all hover:shadow-md">
+            <label class="flex items-center space-x-3 cursor-pointer select-none">
+                <input type="checkbox" id="promoCheck" class="form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500" onchange="calculateTotal()">
+                <div>
+                    <span class="text-sm font-bold text-blue-800 flex items-center gap-1">
+                        <i class="fas fa-tag"></i> Klaim Promo New User?
+                    </span>
+                    <p class="text-[10px] text-blue-600 leading-tight">Khusus 2 order pertama per Nomor HP.</p>
+                </div>
+            </label>
+        </div>
+
+        <!-- Form Input Halaman -->
+        <div class="space-y-4">
+            <!-- Hitam Putih -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1 flex justify-between">
+                    <span>Hitam Putih (BW)</span>
+                    <span class="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded" id="labelBW">Rp500/lbr</span>
+                </label>
+                <div class="flex items-center">
+                    <input type="number" id="qtyBW" min="0" placeholder="0" class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition" oninput="calculateTotal()">
+                    <span class="ml-2 text-sm text-gray-500 w-8">hal</span>
+                </div>
+            </div>
+
+            <!-- Warna Parsial -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1 flex justify-between">
+                    <span>Warna Sedikit / Parsial</span>
+                    <span class="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded" id="labelPartial">Rp1.000/lbr</span>
+                </label>
+                <div class="flex items-center">
+                    <input type="number" id="qtyPartial" min="0" placeholder="0" class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition" oninput="calculateTotal()">
+                    <span class="ml-2 text-sm text-gray-500 w-8">hal</span>
+                </div>
+                <p class="text-[10px] text-gray-400 mt-1 ml-1"><i class="fas fa-info-circle"></i> Contoh: Header logo, link biru, grafik kecil.</p>
+            </div>
+
+            <!-- Full Color -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1 flex justify-between">
+                    <span>Full Color / Gambar Besar</span>
+                    <span class="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded" id="labelFull">Rp2.000/lbr</span>
+                </label>
+                <div class="flex items-center">
+                    <input type="number" id="qtyFull" min="0" placeholder="0" class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition" oninput="calculateTotal()">
+                    <span class="ml-2 text-sm text-gray-500 w-8">hal</span>
+                </div>
+            </div>
+
+            <!-- Jilid -->
+            <div class="flex items-center justify-between p-3 border rounded-lg bg-gray-50 hover:bg-gray-100 transition">
+                <label class="flex items-center space-x-3 cursor-pointer w-full select-none">
+                    <input type="checkbox" id="jilidCheck" class="form-checkbox h-5 w-5 text-green-600 rounded focus:ring-green-500" onchange="calculateTotal()">
+                    <span class="text-sm font-medium text-gray-700">Tambah Jilid Lakban (+Rp7.000)</span>
+                </label>
+            </div>
+
+            <!-- Logic Off-Hours (Hidden by Default) -->
+            <div id="offHoursSection" class="hidden mt-4 p-3 bg-red-50 border border-red-200 rounded-lg animate-fade-in">
+                <div class="flex items-start gap-2 mb-2">
+                    <i class="fas fa-moon text-red-500 mt-1"></i>
+                    <div>
+                        <p class="text-sm font-bold text-red-700">Di Luar Jam Operasional</p>
+                        <p class="text-xs text-red-600">Saat ini toko tutup (Buka 07.00 - 23.00).</p>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-2 rounded border border-red-100">
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input type="checkbox" id="emergencyCheck" class="form-checkbox h-4 w-4 text-red-600" onchange="calculateTotal()">
+                        <span class="text-xs font-bold text-gray-800">Aktifkan Emergency Slot? (+Rp3.000)</span>
+                    </label>
+                    <p id="emergencyDesc" class="text-[10px] text-gray-500 mt-1 ml-6">
+                        Jika <b>DICENTANG</b>: Dikerjakan subuh (05.00 - 07.00).<br>
+                        Jika <b>TIDAK</b>: Diproses jam 07.00 pagi sesuai antrian.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Delivery Options (Flat Rate Update) -->
+            <div class="pt-4 border-t mt-4">
+                <label class="block text-sm font-bold text-gray-800 mb-2"><i class="fas fa-motorcycle"></i> Pengiriman / Pengambilan</label>
+                <select id="deliveryZone" class="w-full p-2.5 border border-gray-300 rounded-lg mb-3 bg-white text-sm focus:ring-2 focus:ring-blue-500 outline-none" onchange="toggleAddressField()">
+                    <option value="0">Ambil Sendiri (Janjian dulu sama Admin)</option>
+                    <option value="5000">Diantar Admin (Flat Rp5.000)</option>
+                </select>
+
+                <!-- Kolom Alamat (Hidden by default) -->
+                <div id="addressField" class="hidden space-y-3 animate-fade-in bg-gray-50 p-3 rounded-lg border border-gray-200">
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600 block mb-1">Alamat Lengkap & Patokan</label>
+                        <textarea id="addressText" rows="2" placeholder="Contoh: Kost Griya ASRI No 5 (Pagar Hitam), masuk dari gang sebelah Indomaret." class="w-full p-2 border border-gray-300 rounded text-sm focus:border-blue-500 outline-none"></textarea>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600 block mb-1">Link Google Maps (Biar Akurat)</label>
+                        <input type="text" id="gmapsLink" placeholder="Paste link gmaps disini (Opsional)" class="w-full p-2 border border-gray-300 rounded text-sm focus:border-blue-500 outline-none">
+                    </div>
+                </div>
+                
+                <div id="pickupNote" class="text-xs text-gray-500 italic bg-yellow-50 p-2 rounded border border-yellow-100">
+                    *Silahkan buat janji waktu pengambilan dengan admin setelah kirim order.
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Display -->
+        <div class="mt-8 p-4 bg-gradient-to-br from-blue-50 to-white rounded-xl border border-blue-100 shadow-sm">
+            <div class="flex justify-between items-center mb-1">
+                <span class="text-gray-600 text-sm">Biaya Print & Jilid:</span>
+                <span class="font-semibold text-gray-800" id="subtotalPrint">Rp 0</span>
+            </div>
+            <div class="flex justify-between items-center mb-1">
+                <span class="text-gray-600 text-sm">Ongkir:</span>
+                <span class="font-semibold text-gray-800" id="subtotalOngkir">Rp 0</span>
+            </div>
+            
+            <!-- Early Bird Row Hidden by Default -->
+            <div id="rowEarlyBird" class="hidden flex justify-between items-center mb-1 text-red-600 bg-red-50 px-2 py-0.5 rounded">
+                <span class="text-sm font-medium">⚡ Emergency Fee:</span>
+                <span class="font-bold">+Rp 3.000</span>
+            </div>
+            
+            <div class="border-t border-blue-200 my-3"></div>
+            
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-gray-800 font-bold">Total Estimasi:</span>
+                <span class="text-3xl font-bold text-blue-700" id="totalDisplay">Rp 0</span>
+            </div>
+            
+            <!-- BUTTON 1: Generate Message -->
+            <button id="btnGenerate" onclick="generateMessage()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center gap-2 shadow mb-3">
+                <i class="fas fa-file-alt"></i> Buat Pesan Order
+            </button>
+
+            <!-- PREVIEW SECTION (Hidden Initially) -->
+            <div id="previewSection" class="hidden animate-fade-in">
+                <label class="block text-xs font-semibold text-gray-600 mb-1">Preview Pesan (Bisa dicopy manual):</label>
+                <textarea id="msgPreview" readonly class="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg text-sm text-gray-800 font-mono mb-3 h-40 focus:outline-none" onclick="this.select()"></textarea>
+                
+                <!-- BUTTON 2: Open WhatsApp -->
+                <button onclick="openWhatsApp()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 px-4 rounded-lg transition duration-200 flex items-center justify-center gap-2 shadow-lg active:scale-95 transform">
+                    <i class="fab fa-whatsapp text-xl"></i> Buka WhatsApp Admin
+                </button>
+                <p class="text-[10px] text-center text-gray-400 mt-2">Tombol di atas akan otomatis membuka aplikasi WA dengan pesan terisi.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Cek Jam saat load halaman
+        window.onload = function() {
+            checkTime();
+            calculateTotal();
+        };
+
+        let isOffHours = false;
+
+        function checkTime() {
+            const now = new Date();
+            const hour = now.getHours();
+            
+            // Logic: Di luar jam 07.00 - 23.00
+            // Artinya: jam 23, 0, 1, 2, 3, 4, 5, 6
+            if (hour >= 23 || hour < 7) {
+                isOffHours = true;
+                document.getElementById('offHoursSection').classList.remove('hidden');
+            } else {
+                isOffHours = false;
+                document.getElementById('offHoursSection').classList.add('hidden');
+                // Reset checkbox kalau jam operasional
+                document.getElementById('emergencyCheck').checked = false;
+            }
+        }
+
+        function toggleAddressField() {
+            const zone = document.getElementById('deliveryZone').value;
+            const addrField = document.getElementById('addressField');
+            const pickupNote = document.getElementById('pickupNote');
+            
+            if (zone != "0") {
+                addrField.classList.remove('hidden');
+                pickupNote.classList.add('hidden');
+            } else {
+                addrField.classList.add('hidden');
+                pickupNote.classList.remove('hidden');
+            }
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            // Get Promo Status
+            const isPromo = document.getElementById('promoCheck').checked;
+
+            // Set Prices Dynamically (Normal vs Promo)
+            const priceBW = isPromo ? 400 : 500;
+            const pricePartial = isPromo ? 800 : 1000;
+            const priceFull = isPromo ? 1600 : 2000;
+
+            // Update Labels UI
+            updateLabel('labelBW', priceBW);
+            updateLabel('labelPartial', pricePartial);
+            updateLabel('labelFull', priceFull);
+
+            // Get Inputs
+            const bw = parseInt(document.getElementById('qtyBW').value) || 0;
+            const partial = parseInt(document.getElementById('qtyPartial').value) || 0;
+            const full = parseInt(document.getElementById('qtyFull').value) || 0;
+            
+            // Update Jilid Price to 7000
+            const jilid = document.getElementById('jilidCheck').checked ? 7000 : 0;
+            const delivery = parseInt(document.getElementById('deliveryZone').value) || 0;
+            
+            // Emergency Fee Logic
+            let emergencyFee = 0;
+            if (isOffHours && document.getElementById('emergencyCheck').checked) {
+                emergencyFee = 3000;
+                document.getElementById('rowEarlyBird').classList.remove('hidden');
+            } else {
+                document.getElementById('rowEarlyBird').classList.add('hidden');
+            }
+
+            // Calculations
+            const printCost = (bw * priceBW) + (partial * pricePartial) + (full * priceFull) + jilid;
+            const total = printCost + delivery + emergencyFee;
+
+            // Display
+            const formatter = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 });
+            
+            document.getElementById('subtotalPrint').innerText = formatter.format(printCost);
+            document.getElementById('subtotalOngkir').innerText = formatter.format(delivery);
+            document.getElementById('totalDisplay').innerText = formatter.format(total);
+            
+            // Hide preview if user changes values to force regenerate
+            document.getElementById('previewSection').classList.add('hidden');
+            document.getElementById('btnGenerate').classList.remove('hidden');
+            
+            return { bw, partial, full, jilid, delivery, total, isPromo, emergencyFee };
+        }
+
+        function updateLabel(id, price) {
+            const el = document.getElementById(id);
+            el.innerText = `Rp${price}/lbr`;
+            if (document.getElementById('promoCheck').checked) {
+                el.classList.add('text-blue-600', 'bg-blue-100');
+                el.classList.remove('text-gray-500', 'bg-gray-100');
+            } else {
+                el.classList.remove('text-blue-600', 'bg-blue-100');
+                el.classList.add('text-gray-500', 'bg-gray-100');
+            }
+        }
+
+        function createMessageText() {
+            const data = calculateTotal();
+            const zoneVal = document.getElementById('deliveryZone').value;
+            const zoneText = document.getElementById('deliveryZone').options[document.getElementById('deliveryZone').selectedIndex].text;
+            const address = document.getElementById('addressText').value;
+            const gmaps = document.getElementById('gmapsLink').value;
+            const totalStr = document.getElementById('totalDisplay').innerText;
+            
+            // Validasi Identitas
+            const nama = document.getElementById('inputNama').value.trim();
+            const nim = document.getElementById('inputNIM').value.trim();
+            
+            if (nama === "" || nim === "") {
+                alert("⚠️ Mohon isi Nama Panggilan & NIM terlebih dahulu!");
+                document.getElementById('inputNama').focus();
+                return null;
+            }
+
+            // Validasi Alamat
+            if (zoneVal != "0" && address.trim() === "") {
+                alert("⚠️ Mohon isi Alamat Lengkap & Patokan agar admin tidak nyasar!");
+                document.getElementById('addressText').focus();
+                return null;
+            }
+
+            let message = `*ORDER BARU HAMMADS MERCH* 🖨️\n`;
+            message += `--------------------------\n`;
+            message += `👤 *Identitas*\n`;
+            message += `Nama: ${nama}\n`;
+            message += `NIM: ${nim}\n\n`;
+            
+            if (data.isPromo) message += `🔥 *KLAIM PROMO NEW USER*\n`;
+            
+            // Status Pengerjaan (Emergency atau Reguler)
+            if (data.emergencyFee > 0) {
+                message += `⚡ *EMERGENCY SLOT (+3rb)*\n(Mohon dikerjakan subuh 05.00-07.00)\n`;
+            } else if (isOffHours) {
+                message += `🕒 *Order Reguler*\n(Diproses jam 07.00 pagi)\n`;
+            }
+            
+            message += `\n*Detail Cetak:*\n`;
+            if (data.bw > 0) message += `- BW: ${data.bw} lbr\n`;
+            if (data.partial > 0) message += `- Warna (Parsial): ${data.partial} lbr\n`;
+            if (data.full > 0) message += `- Full Color: ${data.full} lbr\n`;
+            if (data.jilid > 0) message += `- Jilid Lakban: Ya\n`;
+            
+            message += `\n*Pengiriman:*\n`;
+            message += `- Metode: ${zoneText}\n`;
+            
+            if (zoneVal != "0") {
+                message += `- Alamat: ${address}\n`;
+                if(gmaps) message += `- Maps: ${gmaps}\n`;
+            } else {
+                message += `- Note: Saya akan chat admin untuk janjian ambil.\n`;
+            }
+
+            message += `--------------------------\n`;
+            message += `*ESTIMASI TOTAL: ${totalStr}*\n\n`;
+            message += `_File PDF akan saya kirim setelah pesan ini..._`;
+            
+            return message;
+        }
+
+        function generateMessage() {
+            const msg = createMessageText();
+            if (msg) {
+                document.getElementById('msgPreview').value = msg;
+                document.getElementById('previewSection').classList.remove('hidden');
+                document.getElementById('btnGenerate').classList.add('hidden');
+                
+                // Auto select text for easy copy
+                document.getElementById('msgPreview').select();
+            }
+        }
+
+        function openWhatsApp() {
+            const msg = document.getElementById('msgPreview').value;
+            if (!msg) return;
+
+            const waNumber = "6285111379790"; 
+            const url = `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
+            
+            window.open(url, '_blank');
+        }
+    </script>
+</body>
+</html>

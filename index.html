@@ -12,6 +12,19 @@
         .hidden { display: none; }
         .animate-fade-in { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Toggle Switch Styles */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #3b82f6;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #3b82f6;
+        }
+        .toggle-checkbox:checked + .toggle-label:after {
+            transform: translateX(100%);
+            border-color: white;
+        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
@@ -25,29 +38,47 @@
         </div>
 
         <!-- Kolom Data Diri (Wajib) -->
-        <div class="mb-6 bg-gray-50 p-4 rounded-lg border border-gray-200">
-            <h3 class="text-sm font-bold text-gray-700 mb-3"><i class="fas fa-user-circle"></i> Identitas Pemesan (Wajib)</h3>
+        <div class="mb-5 bg-gray-50 p-4 rounded-lg border border-gray-200">
+            <h3 class="text-sm font-bold text-gray-700 mb-3"><i class="fas fa-user-circle"></i> Identitas Pemesan</h3>
             <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label class="text-xs text-gray-500 block mb-1">Nama Panggilan</label>
+                    <label class="text-xs text-gray-500 block mb-1">Nama Panggilan *</label>
                     <input type="text" id="inputNama" placeholder="Contoh: Tono" class="w-full p-2 border border-gray-300 rounded text-sm focus:border-blue-500 outline-none">
                 </div>
                 <div>
-                    <label class="text-xs text-gray-500 block mb-1">NIM</label>
+                    <label class="text-xs text-gray-500 block mb-1">NIM *</label>
                     <input type="number" id="inputNIM" placeholder="12524099" class="w-full p-2 border border-gray-300 rounded text-sm focus:border-blue-500 outline-none">
                 </div>
             </div>
         </div>
 
+        <!-- Opsi Mode Print (Normal vs Bolak-Balik) -->
+        <div class="mb-5 p-4 rounded-lg border border-indigo-200 bg-indigo-50 shadow-sm transition-all">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-sm font-bold text-indigo-800 mb-1"><i class="fas fa-copy"></i> Mode Cetak</h3>
+                    <p class="text-[10px] text-indigo-600 leading-tight">Pilih 1 Sisi atau Bolak-Balik (Duplex).</p>
+                </div>
+                <!-- Toggle Switch -->
+                <div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+                    <input type="checkbox" name="toggle" id="duplexToggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer transition-transform duration-200 ease-in-out" onchange="calculateTotal()"/>
+                    <label for="duplexToggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer transition-colors duration-200 ease-in-out"></label>
+                </div>
+            </div>
+            <div class="mt-2 text-center">
+                <span id="modeStatusText" class="text-xs font-bold text-gray-600 bg-white px-3 py-1 rounded-full border border-gray-200 inline-block shadow-sm">1 Sisi (Normal)</span>
+            </div>
+        </div>
+
         <!-- Opsi Promo New User -->
-        <div class="mb-6 bg-blue-50 p-3 rounded-lg border border-blue-200 transition-all hover:shadow-md">
+        <div class="mb-5 bg-blue-50 p-3 rounded-lg border border-blue-200 transition-all hover:shadow-md">
             <label class="flex items-center space-x-3 cursor-pointer select-none">
                 <input type="checkbox" id="promoCheck" class="form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500" onchange="calculateTotal()">
                 <div>
                     <span class="text-sm font-bold text-blue-800 flex items-center gap-1">
                         <i class="fas fa-tag"></i> Klaim Promo New User?
                     </span>
-                    <p class="text-[10px] text-blue-600 leading-tight">Khusus 2 order pertama per Nomor HP.</p>
+                    <p class="text-[10px] text-blue-600 leading-tight">Disc. 20%, Khusus 2 order pertama per Nomor HP.</p>
                 </div>
             </label>
         </div>
@@ -58,7 +89,7 @@
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1 flex justify-between">
                     <span>Hitam Putih (BW)</span>
-                    <span class="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded" id="labelBW">Rp500/lbr</span>
+                    <span class="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded transition-colors" id="labelBW">Rp500/lbr</span>
                 </label>
                 <div class="flex items-center">
                     <input type="number" id="qtyBW" min="0" placeholder="0" class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition" oninput="calculateTotal()">
@@ -70,20 +101,19 @@
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1 flex justify-between">
                     <span>Warna Sedikit / Parsial</span>
-                    <span class="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded" id="labelPartial">Rp1.000/lbr</span>
+                    <span class="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded transition-colors" id="labelPartial">Rp1.000/lbr</span>
                 </label>
                 <div class="flex items-center">
                     <input type="number" id="qtyPartial" min="0" placeholder="0" class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition" oninput="calculateTotal()">
                     <span class="ml-2 text-sm text-gray-500 w-8">hal</span>
                 </div>
-                <p class="text-[10px] text-gray-400 mt-1 ml-1"><i class="fas fa-info-circle"></i> Contoh: Header logo, link biru, grafik kecil.</p>
             </div>
 
             <!-- Full Color -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1 flex justify-between">
                     <span>Full Color / Gambar Besar</span>
-                    <span class="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded" id="labelFull">Rp2.000/lbr</span>
+                    <span class="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded transition-colors" id="labelFull">Rp2.000/lbr</span>
                 </label>
                 <div class="flex items-center">
                     <input type="number" id="qtyFull" min="0" placeholder="0" class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition" oninput="calculateTotal()">
@@ -92,11 +122,18 @@
             </div>
 
             <!-- Jilid -->
-            <div class="flex items-center justify-between p-3 border rounded-lg bg-gray-50 hover:bg-gray-100 transition">
+            <div class="flex items-center justify-between p-3 border rounded-lg bg-gray-50 hover:bg-gray-100 transition mt-2">
                 <label class="flex items-center space-x-3 cursor-pointer w-full select-none">
                     <input type="checkbox" id="jilidCheck" class="form-checkbox h-5 w-5 text-green-600 rounded focus:ring-green-500" onchange="calculateTotal()">
                     <span class="text-sm font-medium text-gray-700">Tambah Jilid Lakban (+Rp7.000)</span>
                 </label>
+            </div>
+
+            <!-- Kolom Catatan Tambahan (Custom Note) -->
+            <div class="mt-3">
+                <label class="text-sm font-bold text-gray-700 block mb-1"><i class="fas fa-edit"></i> Catatan Tambahan (Opsional)</label>
+                <textarea id="customNote" rows="2" placeholder="Contoh: Hal 1-5 warna, sisanya BW. Tolong diantar sebelum jam 10.00 pagi ya, min. Tolong jilid cover warna biru ya min." class="w-full p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none resize-none"></textarea>
+                <p class="text-[10px] text-gray-400 mt-1">*Tulis request spesifik di sini biar gak misskomunikasi.</p>
             </div>
 
             <!-- Logic Off-Hours (Hidden by Default) -->
@@ -132,8 +169,8 @@
                 <!-- Kolom Alamat (Hidden by default) -->
                 <div id="addressField" class="hidden space-y-3 animate-fade-in bg-gray-50 p-3 rounded-lg border border-gray-200">
                     <div>
-                        <label class="text-xs font-semibold text-gray-600 block mb-1">Alamat Lengkap & Patokan</label>
-                        <textarea id="addressText" rows="2" placeholder="Contoh: Kost Griya ASRI No 5 (Pagar Hitam), masuk dari gang sebelah Indomaret." class="w-full p-2 border border-gray-300 rounded text-sm focus:border-blue-500 outline-none"></textarea>
+                        <label class="text-xs font-semibold text-gray-600 block mb-1">Alamat Lengkap & Patokan *</label>
+                        <textarea id="addressText" rows="2" placeholder="Contoh: Kost Griya ASRI No 5 (Pagar Hitam), masuk dari gang sebelah Indomaret." class="w-full p-2 border border-gray-300 rounded text-sm focus:border-blue-500 outline-none resize-none"></textarea>
                     </div>
                     <div>
                         <label class="text-xs font-semibold text-gray-600 block mb-1">Link Google Maps (Biar Akurat)</label>
@@ -142,7 +179,7 @@
                 </div>
                 
                 <div id="pickupNote" class="text-xs text-gray-500 italic bg-yellow-50 p-2 rounded border border-yellow-100">
-                    *Silahkan buat janji waktu pengambilan dengan admin setelah kirim order.
+                    *Silahkan buat janji waktu pengambilan dengan admin setelah order terkonfirmasi.
                 </div>
             </div>
         </div>
@@ -179,19 +216,37 @@
             <!-- PREVIEW SECTION (Hidden Initially) -->
             <div id="previewSection" class="hidden animate-fade-in">
                 <label class="block text-xs font-semibold text-gray-600 mb-1">Preview Pesan (Bisa dicopy manual):</label>
-                <textarea id="msgPreview" readonly class="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg text-sm text-gray-800 font-mono mb-3 h-40 focus:outline-none" onclick="this.select()"></textarea>
+                <textarea id="msgPreview" readonly class="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg text-sm text-gray-800 font-mono mb-3 h-48 focus:outline-none resize-none" onclick="this.select()"></textarea>
                 
                 <!-- BUTTON 2: Open WhatsApp -->
                 <button onclick="openWhatsApp()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 px-4 rounded-lg transition duration-200 flex items-center justify-center gap-2 shadow-lg active:scale-95 transform">
                     <i class="fab fa-whatsapp text-xl"></i> Buka WhatsApp Admin
                 </button>
-                <p class="text-[10px] text-center text-gray-400 mt-2">Tombol di atas akan otomatis membuka aplikasi WA dengan pesan terisi.</p>
+                <p class="text-[10px] text-center text-gray-400 mt-2">Tombol ini otomatis membuka aplikasi WA dengan pesan terisi.</p>
             </div>
         </div>
 
     </div>
 
     <script>
+        // Harga Dasar (Normal - 1 Sisi)
+        const BASE_PRICE_BW = 500;
+        const BASE_PRICE_PARTIAL = 1000;
+        const BASE_PRICE_FULL = 2000;
+
+        // Harga Dasar (Bolak-Balik)
+        const DUPLEX_PRICE_BW = 800;
+        const DUPLEX_PRICE_PARTIAL = 1600;
+        const DUPLEX_PRICE_FULL = 3200;
+
+        // Harga Promo Diskon (Diaplikasikan secara persentase agar konsisten)
+        const PROMO_DISCOUNT_PERCENT = 0.20; // Diskon 20%
+        
+        // Harga Promo Fix (Sesuai request awal untuk 1 Sisi)
+        const PROMO_PRICE_BW = 400;
+        const PROMO_PRICE_PARTIAL = 800;
+        const PROMO_PRICE_FULL = 1600;
+
         // Cek Jam saat load halaman
         window.onload = function() {
             checkTime();
@@ -205,14 +260,12 @@
             const hour = now.getHours();
             
             // Logic: Di luar jam 07.00 - 23.00
-            // Artinya: jam 23, 0, 1, 2, 3, 4, 5, 6
             if (hour >= 23 || hour < 7) {
                 isOffHours = true;
                 document.getElementById('offHoursSection').classList.remove('hidden');
             } else {
                 isOffHours = false;
                 document.getElementById('offHoursSection').classList.add('hidden');
-                // Reset checkbox kalau jam operasional
                 document.getElementById('emergencyCheck').checked = false;
             }
         }
@@ -233,25 +286,44 @@
         }
 
         function calculateTotal() {
-            // Get Promo Status
+            // Get States
             const isPromo = document.getElementById('promoCheck').checked;
+            const isDuplex = document.getElementById('duplexToggle').checked;
 
-            // Set Prices Dynamically (Normal vs Promo)
-            const priceBW = isPromo ? 400 : 500;
-            const pricePartial = isPromo ? 800 : 1000;
-            const priceFull = isPromo ? 1600 : 2000;
+            // Update Status Text Mode Cetak
+            const statusText = document.getElementById('modeStatusText');
+            if (isDuplex) {
+                statusText.innerText = "Bolak-Balik (Duplex)";
+                statusText.className = "text-xs font-bold text-indigo-700 bg-indigo-100 px-3 py-1 rounded-full border border-indigo-200 inline-block shadow-sm transition-colors";
+            } else {
+                statusText.innerText = "1 Sisi (Normal)";
+                statusText.className = "text-xs font-bold text-gray-600 bg-white px-3 py-1 rounded-full border border-gray-200 inline-block shadow-sm transition-colors";
+            }
+
+            // Calculate Prices Dynamically based on Mode and Promo
+            let priceBW, pricePartial, priceFull;
+
+            if (isDuplex) {
+                // Harga Bolak-Balik
+                priceBW = isPromo ? Math.round(DUPLEX_PRICE_BW * (1 - PROMO_DISCOUNT_PERCENT)) : DUPLEX_PRICE_BW;
+                pricePartial = isPromo ? Math.round(DUPLEX_PRICE_PARTIAL * (1 - PROMO_DISCOUNT_PERCENT)) : DUPLEX_PRICE_PARTIAL;
+                priceFull = isPromo ? Math.round(DUPLEX_PRICE_FULL * (1 - PROMO_DISCOUNT_PERCENT)) : DUPLEX_PRICE_FULL;
+            } else {
+                // Harga 1 Sisi
+                priceBW = isPromo ? PROMO_PRICE_BW : BASE_PRICE_BW;
+                pricePartial = isPromo ? PROMO_PRICE_PARTIAL : BASE_PRICE_PARTIAL;
+                priceFull = isPromo ? PROMO_PRICE_FULL : BASE_PRICE_FULL;
+            }
 
             // Update Labels UI
-            updateLabel('labelBW', priceBW);
-            updateLabel('labelPartial', pricePartial);
-            updateLabel('labelFull', priceFull);
+            updateLabel('labelBW', priceBW, isPromo, isDuplex);
+            updateLabel('labelPartial', pricePartial, isPromo, isDuplex);
+            updateLabel('labelFull', priceFull, isPromo, isDuplex);
 
             // Get Inputs
             const bw = parseInt(document.getElementById('qtyBW').value) || 0;
             const partial = parseInt(document.getElementById('qtyPartial').value) || 0;
             const full = parseInt(document.getElementById('qtyFull').value) || 0;
-            
-            // Update Jilid Price to 7000
             const jilid = document.getElementById('jilidCheck').checked ? 7000 : 0;
             const delivery = parseInt(document.getElementById('deliveryZone').value) || 0;
             
@@ -268,28 +340,36 @@
             const printCost = (bw * priceBW) + (partial * pricePartial) + (full * priceFull) + jilid;
             const total = printCost + delivery + emergencyFee;
 
-            // Display
+            // Display formatting
             const formatter = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 });
             
             document.getElementById('subtotalPrint').innerText = formatter.format(printCost);
             document.getElementById('subtotalOngkir').innerText = formatter.format(delivery);
             document.getElementById('totalDisplay').innerText = formatter.format(total);
             
-            // Hide preview if user changes values to force regenerate
+            // Reset state tombol message
             document.getElementById('previewSection').classList.add('hidden');
             document.getElementById('btnGenerate').classList.remove('hidden');
             
-            return { bw, partial, full, jilid, delivery, total, isPromo, emergencyFee };
+            return { bw, partial, full, jilid, delivery, total, isPromo, isDuplex, emergencyFee };
         }
 
-        function updateLabel(id, price) {
+        function updateLabel(id, price, isPromo, isDuplex) {
             const el = document.getElementById(id);
-            el.innerText = `Rp${price}/lbr`;
-            if (document.getElementById('promoCheck').checked) {
+            // Tambahkan imbuhan /lbr atau /hal untuk bolak-balik
+            const unitText = isDuplex ? "/lbr(bolak-balik)" : "/lbr";
+            el.innerText = `Rp${price}${unitText}`;
+            
+            // Ubah gaya warna sesuai state
+            el.className = "text-[10px] md:text-xs font-semibold px-2 py-0.5 rounded transition-colors text-right max-w-[120px] md:max-w-none"; // base classes
+            
+            if (isPromo && isDuplex) {
+                el.classList.add('text-indigo-700', 'bg-indigo-100', 'border', 'border-indigo-300');
+            } else if (isPromo && !isDuplex) {
                 el.classList.add('text-blue-600', 'bg-blue-100');
-                el.classList.remove('text-gray-500', 'bg-gray-100');
+            } else if (!isPromo && isDuplex) {
+                el.classList.add('text-indigo-600', 'bg-indigo-50', 'border', 'border-indigo-200');
             } else {
-                el.classList.remove('text-blue-600', 'bg-blue-100');
                 el.classList.add('text-gray-500', 'bg-gray-100');
             }
         }
@@ -298,51 +378,63 @@
             const data = calculateTotal();
             const zoneVal = document.getElementById('deliveryZone').value;
             const zoneText = document.getElementById('deliveryZone').options[document.getElementById('deliveryZone').selectedIndex].text;
-            const address = document.getElementById('addressText').value;
-            const gmaps = document.getElementById('gmapsLink').value;
+            const address = document.getElementById('addressText').value.trim();
+            const gmaps = document.getElementById('gmapsLink').value.trim();
+            const customNote = document.getElementById('customNote').value.trim();
             const totalStr = document.getElementById('totalDisplay').innerText;
             
-            // Validasi Identitas
+            // Validasi Data Diri
             const nama = document.getElementById('inputNama').value.trim();
             const nim = document.getElementById('inputNIM').value.trim();
             
-            if (nama === "" || nim === "") {
+            if (!nama || !nim) {
                 alert("⚠️ Mohon isi Nama Panggilan & NIM terlebih dahulu!");
                 document.getElementById('inputNama').focus();
                 return null;
             }
 
-            // Validasi Alamat
-            if (zoneVal != "0" && address.trim() === "") {
-                alert("⚠️ Mohon isi Alamat Lengkap & Patokan agar admin tidak nyasar!");
+            // Validasi Alamat (Jika diantar)
+            if (zoneVal != "0" && !address) {
+                alert("⚠️ Mohon isi Alamat Lengkap & Patokan agar kurir tidak bingung!");
                 document.getElementById('addressText').focus();
                 return null;
             }
 
+            // Mulai merangkai pesan
             let message = `*ORDER BARU HAMMADS MERCH* 🖨️\n`;
             message += `--------------------------\n`;
             message += `👤 *Identitas*\n`;
             message += `Nama: ${nama}\n`;
             message += `NIM: ${nim}\n\n`;
             
+            // Status Promo
             if (data.isPromo) message += `🔥 *KLAIM PROMO NEW USER*\n`;
             
-            // Status Pengerjaan (Emergency atau Reguler)
+            // Status Pengerjaan Waktu
             if (data.emergencyFee > 0) {
-                message += `⚡ *EMERGENCY SLOT (+3rb)*\n(Mohon dikerjakan subuh 05.00-07.00)\n`;
+                message += `⚡ *EMERGENCY SLOT (+3rb)*\n(Dikerjakan subuh 05.00-07.00)\n`;
             } else if (isOffHours) {
                 message += `🕒 *Order Reguler*\n(Diproses jam 07.00 pagi)\n`;
             }
             
+            // Detail Cetak
             message += `\n*Detail Cetak:*\n`;
+            const modeText = data.isDuplex ? "BOLAK-BALIK (Duplex)" : "1 SISI (Normal)";
+            message += `📌 Mode: *${modeText}*\n`;
+            
             if (data.bw > 0) message += `- BW: ${data.bw} lbr\n`;
             if (data.partial > 0) message += `- Warna (Parsial): ${data.partial} lbr\n`;
             if (data.full > 0) message += `- Full Color: ${data.full} lbr\n`;
             if (data.jilid > 0) message += `- Jilid Lakban: Ya\n`;
             
+            // Catatan Tambahan
+            if (customNote) {
+                message += `\n📝 *Catatan Khusus:*\n_${customNote}_\n`;
+            }
+            
+            // Pengiriman
             message += `\n*Pengiriman:*\n`;
             message += `- Metode: ${zoneText}\n`;
-            
             if (zoneVal != "0") {
                 message += `- Alamat: ${address}\n`;
                 if(gmaps) message += `- Maps: ${gmaps}\n`;
@@ -363,9 +455,6 @@
                 document.getElementById('msgPreview').value = msg;
                 document.getElementById('previewSection').classList.remove('hidden');
                 document.getElementById('btnGenerate').classList.add('hidden');
-                
-                // Auto select text for easy copy
-                document.getElementById('msgPreview').select();
             }
         }
 

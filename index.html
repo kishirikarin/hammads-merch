@@ -14,17 +14,9 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
         
         /* Toggle Switch Styles */
-        .toggle-checkbox:checked {
-            right: 0;
-            border-color: #3b82f6;
-        }
-        .toggle-checkbox:checked + .toggle-label {
-            background-color: #3b82f6;
-        }
-        .toggle-checkbox:checked + .toggle-label:after {
-            transform: translateX(100%);
-            border-color: white;
-        }
+        .toggle-checkbox:checked { right: 0; border-color: #3b82f6; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #3b82f6; }
+        .toggle-checkbox:checked + .toggle-label:after { transform: translateX(100%); border-color: white; }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
@@ -68,6 +60,9 @@
             <div class="mt-2 text-center">
                 <span id="modeStatusText" class="text-xs font-bold text-gray-600 bg-white px-3 py-1 rounded-full border border-gray-200 inline-block shadow-sm">1 Sisi (Normal)</span>
             </div>
+            <div id="duplexInfoText" class="hidden mt-2 text-[10px] text-indigo-700 text-center bg-indigo-100 p-1.5 rounded">
+                <i class="fas fa-info-circle"></i> <b>Masukkan total halaman PDF.</b> Sistem akan otomatis membagi jadi lembar kertas.
+            </div>
         </div>
 
         <!-- Opsi Promo New User -->
@@ -78,22 +73,24 @@
                     <span class="text-sm font-bold text-blue-800 flex items-center gap-1">
                         <i class="fas fa-tag"></i> Klaim Promo New User?
                     </span>
-                    <p class="text-[10px] text-blue-600 leading-tight">Disc. 20%, Khusus 2 order pertama per Nomor HP.</p>
+                    <p class="text-[10px] text-blue-600 leading-tight">Khusus 2 order pertama per Nomor HP.</p>
                 </div>
             </label>
         </div>
 
-        <!-- Form Input Halaman -->
+        <!-- Form Input Halaman PDF -->
         <div class="space-y-4">
+            <p class="text-xs font-bold text-red-500 mb-2 border-b pb-1">⚠️ Input berdasarkan Halaman di file PDF!</p>
+            
             <!-- Hitam Putih -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1 flex justify-between">
                     <span>Hitam Putih (BW)</span>
-                    <span class="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded transition-colors" id="labelBW">Rp500/lbr</span>
+                    <span class="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded transition-colors" id="labelBW">Rp500/hal</span>
                 </label>
                 <div class="flex items-center">
                     <input type="number" id="qtyBW" min="0" placeholder="0" class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition" oninput="calculateTotal()">
-                    <span class="ml-2 text-sm text-gray-500 w-8">hal</span>
+                    <span class="ml-2 text-sm font-bold text-gray-600 w-16">Halaman</span>
                 </div>
             </div>
 
@@ -101,11 +98,11 @@
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1 flex justify-between">
                     <span>Warna Sedikit / Parsial</span>
-                    <span class="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded transition-colors" id="labelPartial">Rp1.000/lbr</span>
+                    <span class="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded transition-colors" id="labelPartial">Rp1.000/hal</span>
                 </label>
                 <div class="flex items-center">
                     <input type="number" id="qtyPartial" min="0" placeholder="0" class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition" oninput="calculateTotal()">
-                    <span class="ml-2 text-sm text-gray-500 w-8">hal</span>
+                    <span class="ml-2 text-sm font-bold text-gray-600 w-16">Halaman</span>
                 </div>
             </div>
 
@@ -113,11 +110,11 @@
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1 flex justify-between">
                     <span>Full Color / Gambar Besar</span>
-                    <span class="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded transition-colors" id="labelFull">Rp2.000/lbr</span>
+                    <span class="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded transition-colors" id="labelFull">Rp2.000/hal</span>
                 </label>
                 <div class="flex items-center">
                     <input type="number" id="qtyFull" min="0" placeholder="0" class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition" oninput="calculateTotal()">
-                    <span class="ml-2 text-sm text-gray-500 w-8">hal</span>
+                    <span class="ml-2 text-sm font-bold text-gray-600 w-16">Halaman</span>
                 </div>
             </div>
 
@@ -129,14 +126,13 @@
                 </label>
             </div>
 
-            <!-- Kolom Catatan Tambahan (Custom Note) -->
+            <!-- Kolom Catatan Tambahan -->
             <div class="mt-3">
                 <label class="text-sm font-bold text-gray-700 block mb-1"><i class="fas fa-edit"></i> Catatan Tambahan (Opsional)</label>
-                <textarea id="customNote" rows="2" placeholder="Contoh: Hal 1-5 warna, sisanya BW. Tolong diantar sebelum jam 10.00 pagi ya, min. Tolong jilid cover warna biru ya min." class="w-full p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none resize-none"></textarea>
-                <p class="text-[10px] text-gray-400 mt-1">*Tulis request spesifik di sini biar gak misskomunikasi.</p>
+                <textarea id="customNote" rows="2" placeholder="Contoh: Hal 1-5 warna, sisanya BW. Tolong diantar sebelum jam 10.00 pagi. Tolong jilid cover warna biru ya." class="w-full p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none resize-none"></textarea>
             </div>
 
-            <!-- Logic Off-Hours (Hidden by Default) -->
+            <!-- Logic Off-Hours -->
             <div id="offHoursSection" class="hidden mt-4 p-3 bg-red-50 border border-red-200 rounded-lg animate-fade-in">
                 <div class="flex items-start gap-2 mb-2">
                     <i class="fas fa-moon text-red-500 mt-1"></i>
@@ -158,7 +154,7 @@
                 </div>
             </div>
             
-            <!-- Delivery Options (Flat Rate Update) -->
+            <!-- Delivery Options -->
             <div class="pt-4 border-t mt-4">
                 <label class="block text-sm font-bold text-gray-800 mb-2"><i class="fas fa-motorcycle"></i> Pengiriman / Pengambilan</label>
                 <select id="deliveryZone" class="w-full p-2.5 border border-gray-300 rounded-lg mb-3 bg-white text-sm focus:ring-2 focus:ring-blue-500 outline-none" onchange="toggleAddressField()">
@@ -166,20 +162,15 @@
                     <option value="5000">Diantar Admin (Flat Rp5.000)</option>
                 </select>
 
-                <!-- Kolom Alamat (Hidden by default) -->
                 <div id="addressField" class="hidden space-y-3 animate-fade-in bg-gray-50 p-3 rounded-lg border border-gray-200">
                     <div>
                         <label class="text-xs font-semibold text-gray-600 block mb-1">Alamat Lengkap & Patokan *</label>
-                        <textarea id="addressText" rows="2" placeholder="Contoh: Kost Griya ASRI No 5 (Pagar Hitam), masuk dari gang sebelah Indomaret." class="w-full p-2 border border-gray-300 rounded text-sm focus:border-blue-500 outline-none resize-none"></textarea>
+                        <textarea id="addressText" rows="2" placeholder="Contoh: Kost Griya ASRI No 5..." class="w-full p-2 border border-gray-300 rounded text-sm focus:border-blue-500 outline-none resize-none"></textarea>
                     </div>
                     <div>
-                        <label class="text-xs font-semibold text-gray-600 block mb-1">Link Google Maps (Biar Akurat)</label>
-                        <input type="text" id="gmapsLink" placeholder="Paste link gmaps disini (Opsional)" class="w-full p-2 border border-gray-300 rounded text-sm focus:border-blue-500 outline-none">
+                        <label class="text-xs font-semibold text-gray-600 block mb-1">Link Google Maps (Opsional)</label>
+                        <input type="text" id="gmapsLink" class="w-full p-2 border border-gray-300 rounded text-sm focus:border-blue-500 outline-none">
                     </div>
-                </div>
-                
-                <div id="pickupNote" class="text-xs text-gray-500 italic bg-yellow-50 p-2 rounded border border-yellow-100">
-                    *Silahkan buat janji waktu pengambilan dengan admin setelah order terkonfirmasi.
                 </div>
             </div>
         </div>
@@ -195,7 +186,6 @@
                 <span class="font-semibold text-gray-800" id="subtotalOngkir">Rp 0</span>
             </div>
             
-            <!-- Early Bird Row Hidden by Default -->
             <div id="rowEarlyBird" class="hidden flex justify-between items-center mb-1 text-red-600 bg-red-50 px-2 py-0.5 rounded">
                 <span class="text-sm font-medium">⚡ Emergency Fee:</span>
                 <span class="font-bold">+Rp 3.000</span>
@@ -208,46 +198,45 @@
                 <span class="text-3xl font-bold text-blue-700" id="totalDisplay">Rp 0</span>
             </div>
             
-            <!-- BUTTON 1: Generate Message -->
+            <!-- BUTTON Generate Message -->
             <button id="btnGenerate" onclick="generateMessage()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center gap-2 shadow mb-3">
-                <i class="fas fa-file-alt"></i> Buat Pesan Order
+                <i class="fas fa-file-invoice"></i> Buat Nota WhatsApp
             </button>
 
-            <!-- PREVIEW SECTION (Hidden Initially) -->
+            <!-- PREVIEW SECTION -->
             <div id="previewSection" class="hidden animate-fade-in">
-                <label class="block text-xs font-semibold text-gray-600 mb-1">Preview Pesan (Bisa dicopy manual):</label>
-                <textarea id="msgPreview" readonly class="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg text-sm text-gray-800 font-mono mb-3 h-48 focus:outline-none resize-none" onclick="this.select()"></textarea>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">Preview Pesan:</label>
+                <textarea id="msgPreview" readonly class="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg text-sm text-gray-800 font-mono mb-3 h-56 focus:outline-none resize-none" onclick="this.select()"></textarea>
                 
-                <!-- BUTTON 2: Open WhatsApp -->
                 <button onclick="openWhatsApp()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 px-4 rounded-lg transition duration-200 flex items-center justify-center gap-2 shadow-lg active:scale-95 transform">
                     <i class="fab fa-whatsapp text-xl"></i> Buka WhatsApp Admin
                 </button>
-                <p class="text-[10px] text-center text-gray-400 mt-2">Tombol ini otomatis membuka aplikasi WA dengan pesan terisi.</p>
             </div>
         </div>
 
     </div>
 
     <script>
-        // Harga Dasar (Normal - 1 Sisi)
-        const BASE_PRICE_BW = 500;
-        const BASE_PRICE_PARTIAL = 1000;
-        const BASE_PRICE_FULL = 2000;
+        // Harga Dasar (1 Sisi / Simplex)
+        const PRICE_SIMPLEX_BW = 500;
+        const PRICE_SIMPLEX_PARTIAL = 1000;
+        const PRICE_SIMPLEX_FULL = 2000;
 
-        // Harga Dasar (Bolak-Balik)
-        const DUPLEX_PRICE_BW = 800;
-        const DUPLEX_PRICE_PARTIAL = 1600;
-        const DUPLEX_PRICE_FULL = 3200;
+        // Harga Dasar (Bolak-Balik / Duplex) - PER LEMBAR KERTAS
+        const PRICE_DUPLEX_BW = 800;
+        const PRICE_DUPLEX_PARTIAL = 1600;
+        const PRICE_DUPLEX_FULL = 3200;
 
-        // Harga Promo Diskon (Diaplikasikan secara persentase agar konsisten)
-        const PROMO_DISCOUNT_PERCENT = 0.20; // Diskon 20%
-        
-        // Harga Promo Fix (Sesuai request awal untuk 1 Sisi)
-        const PROMO_PRICE_BW = 400;
-        const PROMO_PRICE_PARTIAL = 800;
-        const PROMO_PRICE_FULL = 1600;
+        // Promo 1 Sisi
+        const PROMO_SIMPLEX_BW = 400;
+        const PROMO_SIMPLEX_PARTIAL = 800;
+        const PROMO_SIMPLEX_FULL = 1600;
 
-        // Cek Jam saat load halaman
+        // Promo Bolak-Balik (Diskon 20%)
+        const PROMO_DUPLEX_BW = 640;
+        const PROMO_DUPLEX_PARTIAL = 1280;
+        const PROMO_DUPLEX_FULL = 2560;
+
         window.onload = function() {
             checkTime();
             calculateTotal();
@@ -258,8 +247,6 @@
         function checkTime() {
             const now = new Date();
             const hour = now.getHours();
-            
-            // Logic: Di luar jam 07.00 - 23.00
             if (hour >= 23 || hour < 7) {
                 isOffHours = true;
                 document.getElementById('offHoursSection').classList.remove('hidden');
@@ -273,61 +260,75 @@
         function toggleAddressField() {
             const zone = document.getElementById('deliveryZone').value;
             const addrField = document.getElementById('addressField');
-            const pickupNote = document.getElementById('pickupNote');
-            
             if (zone != "0") {
                 addrField.classList.remove('hidden');
-                pickupNote.classList.add('hidden');
             } else {
                 addrField.classList.add('hidden');
-                pickupNote.classList.remove('hidden');
             }
             calculateTotal();
         }
 
+        function calculateCost(pages, isDuplex, priceSimplex, priceDuplex) {
+            if (pages <= 0) return { cost: 0, duplexSheets: 0, simplexSheets: 0 };
+            
+            if (isDuplex) {
+                // Logic bagi 2 kertas untuk bolak-balik
+                const duplexSheets = Math.floor(pages / 2);
+                const simplexSheets = pages % 2; // Jika ganjil, sisa 1 halaman dihargai 1 sisi
+                const cost = (duplexSheets * priceDuplex) + (simplexSheets * priceSimplex);
+                return { cost, duplexSheets, simplexSheets };
+            } else {
+                // Normal 1 sisi
+                return { cost: pages * priceSimplex, duplexSheets: 0, simplexSheets: pages };
+            }
+        }
+
         function calculateTotal() {
-            // Get States
             const isPromo = document.getElementById('promoCheck').checked;
             const isDuplex = document.getElementById('duplexToggle').checked;
 
-            // Update Status Text Mode Cetak
+            // Update UI State
             const statusText = document.getElementById('modeStatusText');
+            const duplexInfo = document.getElementById('duplexInfoText');
             if (isDuplex) {
                 statusText.innerText = "Bolak-Balik (Duplex)";
-                statusText.className = "text-xs font-bold text-indigo-700 bg-indigo-100 px-3 py-1 rounded-full border border-indigo-200 inline-block shadow-sm transition-colors";
+                statusText.className = "text-xs font-bold text-indigo-700 bg-indigo-100 px-3 py-1 rounded-full border border-indigo-200 inline-block shadow-sm";
+                duplexInfo.classList.remove('hidden');
             } else {
                 statusText.innerText = "1 Sisi (Normal)";
-                statusText.className = "text-xs font-bold text-gray-600 bg-white px-3 py-1 rounded-full border border-gray-200 inline-block shadow-sm transition-colors";
+                statusText.className = "text-xs font-bold text-gray-600 bg-white px-3 py-1 rounded-full border border-gray-200 inline-block shadow-sm";
+                duplexInfo.classList.add('hidden');
             }
 
-            // Calculate Prices Dynamically based on Mode and Promo
-            let priceBW, pricePartial, priceFull;
+            // Set Pricing based on Promo
+            const pSimpBW = isPromo ? PROMO_SIMPLEX_BW : PRICE_SIMPLEX_BW;
+            const pSimpPartial = isPromo ? PROMO_SIMPLEX_PARTIAL : PRICE_SIMPLEX_PARTIAL;
+            const pSimpFull = isPromo ? PROMO_SIMPLEX_FULL : PRICE_SIMPLEX_FULL;
 
-            if (isDuplex) {
-                // Harga Bolak-Balik
-                priceBW = isPromo ? Math.round(DUPLEX_PRICE_BW * (1 - PROMO_DISCOUNT_PERCENT)) : DUPLEX_PRICE_BW;
-                pricePartial = isPromo ? Math.round(DUPLEX_PRICE_PARTIAL * (1 - PROMO_DISCOUNT_PERCENT)) : DUPLEX_PRICE_PARTIAL;
-                priceFull = isPromo ? Math.round(DUPLEX_PRICE_FULL * (1 - PROMO_DISCOUNT_PERCENT)) : DUPLEX_PRICE_FULL;
-            } else {
-                // Harga 1 Sisi
-                priceBW = isPromo ? PROMO_PRICE_BW : BASE_PRICE_BW;
-                pricePartial = isPromo ? PROMO_PRICE_PARTIAL : BASE_PRICE_PARTIAL;
-                priceFull = isPromo ? PROMO_PRICE_FULL : BASE_PRICE_FULL;
-            }
+            const pDupBW = isPromo ? PROMO_DUPLEX_BW : PRICE_DUPLEX_BW;
+            const pDupPartial = isPromo ? PROMO_DUPLEX_PARTIAL : PRICE_DUPLEX_PARTIAL;
+            const pDupFull = isPromo ? PROMO_DUPLEX_FULL : PRICE_DUPLEX_FULL;
 
-            // Update Labels UI
-            updateLabel('labelBW', priceBW, isPromo, isDuplex);
-            updateLabel('labelPartial', pricePartial, isPromo, isDuplex);
-            updateLabel('labelFull', priceFull, isPromo, isDuplex);
+            // Update Input Labels Dynamically
+            updateLabel('labelBW', pSimpBW, pDupBW, isPromo, isDuplex);
+            updateLabel('labelPartial', pSimpPartial, pDupPartial, isPromo, isDuplex);
+            updateLabel('labelFull', pSimpFull, pDupFull, isPromo, isDuplex);
 
-            // Get Inputs
-            const bw = parseInt(document.getElementById('qtyBW').value) || 0;
-            const partial = parseInt(document.getElementById('qtyPartial').value) || 0;
-            const full = parseInt(document.getElementById('qtyFull').value) || 0;
+            // Get Input Pages
+            const pagesBW = parseInt(document.getElementById('qtyBW').value) || 0;
+            const pagesPartial = parseInt(document.getElementById('qtyPartial').value) || 0;
+            const pagesFull = parseInt(document.getElementById('qtyFull').value) || 0;
+            
+            // Execute Calculation Engine
+            const calcBW = calculateCost(pagesBW, isDuplex, pSimpBW, pDupBW);
+            const calcPartial = calculateCost(pagesPartial, isDuplex, pSimpPartial, pDupPartial);
+            const calcFull = calculateCost(pagesFull, isDuplex, pSimpFull, pDupFull);
+
+            const printCost = calcBW.cost + calcPartial.cost + calcFull.cost;
+
+            // Extra Costs
             const jilid = document.getElementById('jilidCheck').checked ? 7000 : 0;
             const delivery = parseInt(document.getElementById('deliveryZone').value) || 0;
-            
-            // Emergency Fee Logic
             let emergencyFee = 0;
             if (isOffHours && document.getElementById('emergencyCheck').checked) {
                 emergencyFee = 3000;
@@ -336,42 +337,39 @@
                 document.getElementById('rowEarlyBird').classList.add('hidden');
             }
 
-            // Calculations
-            const printCost = (bw * priceBW) + (partial * pricePartial) + (full * priceFull) + jilid;
-            const total = printCost + delivery + emergencyFee;
+            const total = printCost + jilid + delivery + emergencyFee;
 
-            // Display formatting
+            // Display
             const formatter = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 });
-            
-            document.getElementById('subtotalPrint').innerText = formatter.format(printCost);
+            document.getElementById('subtotalPrint').innerText = formatter.format(printCost + jilid);
             document.getElementById('subtotalOngkir').innerText = formatter.format(delivery);
             document.getElementById('totalDisplay').innerText = formatter.format(total);
             
-            // Reset state tombol message
+            // Reset state
             document.getElementById('previewSection').classList.add('hidden');
             document.getElementById('btnGenerate').classList.remove('hidden');
             
-            return { bw, partial, full, jilid, delivery, total, isPromo, isDuplex, emergencyFee };
+            return { 
+                pages: { bw: pagesBW, partial: pagesPartial, full: pagesFull },
+                calc: { bw: calcBW, partial: calcPartial, full: calcFull },
+                jilid, delivery, total, isPromo, isDuplex, emergencyFee 
+            };
         }
 
-        function updateLabel(id, price, isPromo, isDuplex) {
+        function updateLabel(id, priceSimplex, priceDuplex, isPromo, isDuplex) {
             const el = document.getElementById(id);
-            // Tambahkan imbuhan /lbr atau /hal untuk bolak-balik
-            const unitText = isDuplex ? "/lbr(bolak-balik)" : "/lbr";
-            el.innerText = `Rp${price}${unitText}`;
-            
-            // Ubah gaya warna sesuai state
-            el.className = "text-[10px] md:text-xs font-semibold px-2 py-0.5 rounded transition-colors text-right max-w-[120px] md:max-w-none"; // base classes
-            
-            if (isPromo && isDuplex) {
-                el.classList.add('text-indigo-700', 'bg-indigo-100', 'border', 'border-indigo-300');
-            } else if (isPromo && !isDuplex) {
-                el.classList.add('text-blue-600', 'bg-blue-100');
-            } else if (!isPromo && isDuplex) {
-                el.classList.add('text-indigo-600', 'bg-indigo-50', 'border', 'border-indigo-200');
+            if(isDuplex){
+                el.innerText = `Rp${priceDuplex}/lbr(2hal)`;
             } else {
-                el.classList.add('text-gray-500', 'bg-gray-100');
+                el.innerText = `Rp${priceSimplex}/hal`;
             }
+            
+            el.className = "text-[10px] md:text-xs font-semibold px-2 py-0.5 rounded transition-colors text-right max-w-[120px] md:max-w-none"; 
+            
+            if (isPromo && isDuplex) el.classList.add('text-indigo-700', 'bg-indigo-100', 'border', 'border-indigo-300');
+            else if (isPromo && !isDuplex) el.classList.add('text-blue-600', 'bg-blue-100');
+            else if (!isPromo && isDuplex) el.classList.add('text-indigo-600', 'bg-indigo-50', 'border', 'border-indigo-200');
+            else el.classList.add('text-gray-500', 'bg-gray-100');
         }
 
         function createMessageText() {
@@ -383,68 +381,73 @@
             const customNote = document.getElementById('customNote').value.trim();
             const totalStr = document.getElementById('totalDisplay').innerText;
             
-            // Validasi Data Diri
             const nama = document.getElementById('inputNama').value.trim();
             const nim = document.getElementById('inputNIM').value.trim();
             
             if (!nama || !nim) {
                 alert("⚠️ Mohon isi Nama Panggilan & NIM terlebih dahulu!");
-                document.getElementById('inputNama').focus();
                 return null;
             }
-
-            // Validasi Alamat (Jika diantar)
             if (zoneVal != "0" && !address) {
-                alert("⚠️ Mohon isi Alamat Lengkap & Patokan agar kurir tidak bingung!");
-                document.getElementById('addressText').focus();
+                alert("⚠️ Mohon isi Alamat Lengkap untuk kurir!");
                 return null;
             }
 
-            // Mulai merangkai pesan
             let message = `*ORDER BARU HAMMADS MERCH* 🖨️\n`;
             message += `--------------------------\n`;
-            message += `👤 *Identitas*\n`;
-            message += `Nama: ${nama}\n`;
-            message += `NIM: ${nim}\n\n`;
+            message += `👤 *Identitas*: ${nama} (${nim})\n`;
             
-            // Status Promo
             if (data.isPromo) message += `🔥 *KLAIM PROMO NEW USER*\n`;
+            if (data.emergencyFee > 0) message += `⚡ *EMERGENCY SLOT (+3rb)*\n`;
             
-            // Status Pengerjaan Waktu
-            if (data.emergencyFee > 0) {
-                message += `⚡ *EMERGENCY SLOT (+3rb)*\n(Dikerjakan subuh 05.00-07.00)\n`;
-            } else if (isOffHours) {
-                message += `🕒 *Order Reguler*\n(Diproses jam 07.00 pagi)\n`;
+            message += `\n*Rincian Nota & Cetak:*\n`;
+            message += `📌 Mode Cetak: *${data.isDuplex ? "BOLAK-BALIK" : "1 SISI"}*\n\n`;
+            
+            // Build the breakdown dynamically
+            if (data.pages.bw > 0) {
+                message += `📄 *BW* (${data.pages.bw} Halaman)\n`;
+                if(data.isDuplex) {
+                    if(data.calc.bw.duplexSheets > 0) message += `   ├ ${data.calc.bw.duplexSheets} lbr Bolak-Balik\n`;
+                    if(data.calc.bw.simplexSheets > 0) message += `   └ ${data.calc.bw.simplexSheets} lbr 1-Sisi (Hal Ganjil sisa)\n`;
+                } else {
+                    message += `   └ ${data.calc.bw.simplexSheets} lbr 1-Sisi\n`;
+                }
             }
-            
-            // Detail Cetak
-            message += `\n*Detail Cetak:*\n`;
-            const modeText = data.isDuplex ? "BOLAK-BALIK (Duplex)" : "1 SISI (Normal)";
-            message += `📌 Mode: *${modeText}*\n`;
-            
-            if (data.bw > 0) message += `- BW: ${data.bw} lbr\n`;
-            if (data.partial > 0) message += `- Warna (Parsial): ${data.partial} lbr\n`;
-            if (data.full > 0) message += `- Full Color: ${data.full} lbr\n`;
-            if (data.jilid > 0) message += `- Jilid Lakban: Ya\n`;
-            
-            // Catatan Tambahan
-            if (customNote) {
-                message += `\n📝 *Catatan Khusus:*\n_${customNote}_\n`;
+
+            if (data.pages.partial > 0) {
+                message += `🎨 *Warna Parsial* (${data.pages.partial} Halaman)\n`;
+                if(data.isDuplex) {
+                    if(data.calc.partial.duplexSheets > 0) message += `   ├ ${data.calc.partial.duplexSheets} lbr Bolak-Balik\n`;
+                    if(data.calc.partial.simplexSheets > 0) message += `   └ ${data.calc.partial.simplexSheets} lbr 1-Sisi (Hal Ganjil sisa)\n`;
+                } else {
+                    message += `   └ ${data.calc.partial.simplexSheets} lbr 1-Sisi\n`;
+                }
             }
+
+            if (data.pages.full > 0) {
+                message += `🖼️ *Full Color* (${data.pages.full} Halaman)\n`;
+                if(data.isDuplex) {
+                    if(data.calc.full.duplexSheets > 0) message += `   ├ ${data.calc.full.duplexSheets} lbr Bolak-Balik\n`;
+                    if(data.calc.full.simplexSheets > 0) message += `   └ ${data.calc.full.simplexSheets} lbr 1-Sisi (Hal Ganjil sisa)\n`;
+                } else {
+                    message += `   └ ${data.calc.full.simplexSheets} lbr 1-Sisi\n`;
+                }
+            }
+
+            if (data.jilid > 0) message += `📚 Tambahan: Jilid Lakban (Ya)\n`;
             
-            // Pengiriman
+            if (customNote) message += `\n📝 *Note Khusus:* _${customNote}_\n`;
+            
             message += `\n*Pengiriman:*\n`;
-            message += `- Metode: ${zoneText}\n`;
+            message += `- ${zoneText}\n`;
             if (zoneVal != "0") {
                 message += `- Alamat: ${address}\n`;
                 if(gmaps) message += `- Maps: ${gmaps}\n`;
-            } else {
-                message += `- Note: Saya akan chat admin untuk janjian ambil.\n`;
             }
 
             message += `--------------------------\n`;
             message += `*ESTIMASI TOTAL: ${totalStr}*\n\n`;
-            message += `_File PDF akan saya kirim setelah pesan ini..._`;
+            message += `_Kirim file PDF Kakak setelah pesan ini terkirim ya!_`;
             
             return message;
         }
@@ -461,10 +464,8 @@
         function openWhatsApp() {
             const msg = document.getElementById('msgPreview').value;
             if (!msg) return;
-
             const waNumber = "6285111379790"; 
             const url = `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
-            
             window.open(url, '_blank');
         }
     </script>
